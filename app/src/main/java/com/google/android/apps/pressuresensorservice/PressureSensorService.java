@@ -36,6 +36,8 @@ public class PressureSensorService extends Service {
     }
 
     public void OnPressureSensorChanged(float pressure) {
+        mPSEL.stopListening();
+
         Log.i("PressureSensorService", "Pressure: " + pressure);
 
         String pressureString = Float.toString(pressure);
@@ -43,19 +45,18 @@ public class PressureSensorService extends Service {
         Intent uploadIntent = new Intent(this, UploadIntentService.class);
         uploadIntent.putExtra(UploadIntentService.EXTRA_KEY_IN, pressureString);
         startService(uploadIntent);
-
+/*
         CharSequence text = "Got pressure reading: " + pressure;
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(getApplicationContext(), text, duration);
         toast.show();
-
+*/
         Intent intent = new Intent(this, PressureSensorService.class);
         PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarm.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 20 * 1000, pintent);
 
         // must stop listening, otherwise we get multiple events
-        mPSEL.stopListening();
         stopSelf();
     }
 

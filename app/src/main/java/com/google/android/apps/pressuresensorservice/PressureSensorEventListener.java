@@ -17,12 +17,7 @@ public class PressureSensorEventListener implements SensorEventListener {
                 mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE),
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
-    public void stopListening() {
-        if (mSensorManager != null) {
-            mSensorManager.unregisterListener(this);
-            mSensorManager = null;
-        }
-    }
+
 
     @Override
     public  void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -33,4 +28,12 @@ public class PressureSensorEventListener implements SensorEventListener {
     public  void onSensorChanged(SensorEvent event) {
         mPSE.OnPressureSensorChanged(event.values[0]);
     }
+
+    public void stopListening() {
+        if (mSensorManager != null) {
+            mSensorManager.unregisterListener(this);
+            mSensorManager = null;
+        }
+    }
+
 }
