@@ -1,7 +1,6 @@
 package com.google.android.apps.pressuresensorservice;
 
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
@@ -11,7 +10,6 @@ import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
@@ -85,7 +83,7 @@ public class UploadIntentService extends IntentService {
 
             post.addHeader("content-type", "application/json");
             post.setEntity(params);
-            HttpResponse response = null;
+            HttpResponse response;
 
             try {
                 response = httpClient.execute(post);
@@ -100,7 +98,7 @@ public class UploadIntentService extends IntentService {
                     BufferedReader rd = new BufferedReader(
                             new InputStreamReader(response.getEntity().getContent()));
                     result = new StringBuffer();
-                    String line = "";
+                    String line;
                     while ((line = rd.readLine()) != null) {
                         result.append(line);
                     }
