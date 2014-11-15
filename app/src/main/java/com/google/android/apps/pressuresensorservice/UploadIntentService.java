@@ -105,11 +105,11 @@ public class UploadIntentService extends IntentService {
                         result.append(line);
                     }
                 } catch (IOException e) {
-
                     throw e;
                 }
+
                 CharSequence text = "Upload succeeded.";
-                int duration = Toast.LENGTH_SHORT;
+                int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(getApplicationContext(), text, duration);
                 toast.show();
             }
@@ -119,7 +119,7 @@ public class UploadIntentService extends IntentService {
             e.printStackTrace(pw);
             CharSequence text = "Error: " + sw.toString(); // stack trace as a string
 
-            int duration = Toast.LENGTH_SHORT;
+            int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(getApplicationContext(), text, duration);
             toast.show();
         } finally {

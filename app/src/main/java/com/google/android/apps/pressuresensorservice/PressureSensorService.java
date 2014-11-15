@@ -17,7 +17,7 @@ public class PressureSensorService extends Service {
     @Override
 
     public void onCreate() {
-        mPSEL = new PressureSensorEventListener(this);
+        mPSEL = new FakePressureSensorEventListener(this);
     }
 
     @Override
