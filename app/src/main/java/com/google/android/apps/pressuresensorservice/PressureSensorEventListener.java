@@ -18,7 +18,7 @@ public class PressureSensorEventListener extends BasePressureSensorEventListener
 
     @Override
     public void startListening() {
-        if (!isListening()) {
+        if (isListening()) {
             Log.e("PressureSensorEventListener", "Was already listening");
         } else {
             mSensorManager.registerListener(this, mPressure, SensorManager.SENSOR_DELAY_NORMAL);
@@ -28,11 +28,11 @@ public class PressureSensorEventListener extends BasePressureSensorEventListener
 
     @Override
     public void stopListening() {
-        if (isListening()) {
+        if (!isListening()) {
+            Log.e("PressureSensorEventListener", "Was already not listening");
+        } else {
             mSensorManager.unregisterListener(this);
             mIsListening = false;
-        } else {
-            Log.e("PressureSensorEventListener", "Was already not listening");
         }
     }
 

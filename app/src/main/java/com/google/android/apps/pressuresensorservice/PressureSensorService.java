@@ -24,7 +24,7 @@ public class PressureSensorService extends Service {
         Log.i("PressureSensorService", "onCreate");
         mRestartIntent = new Intent(this, PressureSensorService.class);
         mRestartPendingIntent = PendingIntent.getService(this, 0, mRestartIntent, 0);
-        mPSEL = new FakePressureSensorEventListener(this);
+        mPSEL = new PressureSensorEventListener(this);
     }
 
     @Override
