@@ -1,7 +1,5 @@
 package com.google.android.apps.pressuresensorservice;
 
-import android.hardware.SensorEvent;
-import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -11,7 +9,7 @@ class GenerateFakePressureAsyncTask extends AsyncTask<FakePressureSensorEventLis
         Log.i("GenerateFakePressureAsyncTask", "Starting loop");
 
         while (!isCancelled()) {
-            Log.i("UploadAsyncTask", "providing fake reading!");
+            Log.i("GenerateFakePressureAsyncTask", "providing fake reading!");
             fpsel[0].onSensorChangedImplementation(1015.0f);
             /*if (isCancelled()) break;
             try {
@@ -21,7 +19,8 @@ class GenerateFakePressureAsyncTask extends AsyncTask<FakePressureSensorEventLis
             }*/
             break;
         }
-        Log.i("FakePressureSensorEventListener", "told to stop listening");
+        Log.i("FakePressureSensorEventListener", "loop ended");
+        Log.i("FakePressureSensorEventListener", "isCancelled:" + isCancelled());
         return 0L;
     }
 }
@@ -35,16 +34,24 @@ public class FakePressureSensorEventListener extends BasePressureSensorEventList
     @Override
     public void startListening() {
         Log.i("FakePressureSensorEventListener", "startListening");
-
-        mTask = new GenerateFakePressureAsyncTask().execute(this);
+        if (!isListening()) {
+            mTask = new GenerateFakePressureAsyncTask().execute(this);
+            mIsListening = true;
+        } else {
+            Log.e("FakePressureSensorEventListener", "was already listening");
+        }
     }
 
     @Override
     public void stopListening() {
         Log.i("FakePressureSensorEventListener", "stopListening");
+        if (isListening()) {
+            Log.i("FakePressureSensorEventListener", "cancelling");
+            mTask.cancel(true);
+            mIsListening = false;
 
-        mTask.cancel(true);
-        mTask = null;
+        } else {
+            Log.e("FakePressureSensorEventListener", "was not already listening");
+        }
     }
-
 }

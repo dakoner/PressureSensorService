@@ -5,28 +5,34 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 public class PressureSensorEventListener extends BasePressureSensorEventListener {
     private SensorManager mSensorManager;
     private Sensor mPressure;
-
     PressureSensorEventListener(PressureSensorService pse) {
         super(pse);
-    }
-
-
-
-    public void startListening() {
         mSensorManager = (SensorManager) mPSE.getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
         mPressure = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        mSensorManager.registerListener(this, mPressure, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+    @Override
+    public void startListening() {
+        if (!isListening()) {
+            Log.e("PressureSensorEventListener", "Was already listening");
+        } else {
+            mSensorManager.registerListener(this, mPressure, SensorManager.SENSOR_DELAY_NORMAL);
+            mIsListening = true;
+        }
+    }
+
+    @Override
     public void stopListening() {
-        if (mSensorManager != null) {
+        if (isListening()) {
             mSensorManager.unregisterListener(this);
-            mSensorManager = null;
-            mPressure = null;
+            mIsListening = false;
+        } else {
+            Log.e("PressureSensorEventListener", "Was already not listening");
         }
     }
 

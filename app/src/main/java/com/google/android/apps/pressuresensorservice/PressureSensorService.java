@@ -13,6 +13,8 @@ import java.util.Calendar;
 
 
 public class PressureSensorService extends Service {
+    public static final String EXTRA_KEY_IN = "EXTRA_IN";
+
     private BasePressureSensorEventListener mPSEL;
     private Intent mRestartIntent;
     private PendingIntent mRestartPendingIntent;
@@ -23,20 +25,20 @@ public class PressureSensorService extends Service {
         mRestartIntent = new Intent(this, PressureSensorService.class);
         mRestartPendingIntent = PendingIntent.getService(this, 0, mRestartIntent, 0);
         mPSEL = new FakePressureSensorEventListener(this);
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 20 * 1000, 20 * 1000, mRestartPendingIntent);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("PressureSensorService", "Received start id " + startId + ": " + intent);
-        mPSEL.startListening();
+        if (!mPSEL.isListening())
+            mPSEL.startListening();
         return START_NOT_STICKY;
     }
 
     @Override
     public void onDestroy() {
         Log.i("PressureSensorService", "onDestroy");
+        mPSEL.stopListening();
     }
 
     @Override
@@ -48,39 +50,26 @@ public class PressureSensorService extends Service {
         Log.i("PressureSensorService", "Pressure: " + pressure);
         mPSEL.stopListening();
 
-/*        String pressureString = Float.toString(pressure);
-*/
- /*
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_KEY_IN, Float.toString(pressure));
+        intent.setAction("com.google.android.apps.pressuresensorservice.OnPressure");
+        sendBroadcast(intent);
+
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarm.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 20 * 1000, mRestartPendingIntent);
+
+        /*
+        String pressureString = Float.toString(pressure);
+
         Log.i("PressureSensorService", "Starting upload intent.");
 
         Intent uploadIntent = new Intent(this, UploadIntentService.class);
         uploadIntent.putExtra(UploadIntentService.EXTRA_KEY_IN, pressureString);
         startService(uploadIntent);
         */
-/*
-        CharSequence text = "Got pressure reading: " + pressure;
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-        toast.show();
-*/
-
-        /*
-
-        // must stop listening, otherwise we get multiple events
-        Log.i("PressureSensorService", "Stopping listening.");
-        mPSEL.stopListening();
-
-        Log.i("PressureSensorService", "Starting restart intent.");
-
-        Log.i("PressureSensorService", "pintent=" + mRestartPendingIntent);
-
-
-
-        Log.i("PressureSensorService", "Finishing OnPressureSensorChanged");
 
         stopSelf();
-        */
+
 
     }
-
 }
