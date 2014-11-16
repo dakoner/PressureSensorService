@@ -1,41 +1,50 @@
 package com.google.android.apps.pressuresensorservice;
 
+import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
 
-// TODO(dek): make this inherit directly from SensorEventListener, and make the code that references this use that type as well
-public class FakePressureSensorEventListener extends PressureSensorEventListener {
-    private SensorManager mSensorManager;
-    private AsyncTask<PressureSensorService, Integer, Long> mTask;
+class GenerateFakePressureAsyncTask extends AsyncTask<FakePressureSensorEventListener, Integer, Long> {
+    protected Long doInBackground(FakePressureSensorEventListener... fpsel) {
+        Log.i("GenerateFakePressureAsyncTask", "Starting loop");
+
+        while (!isCancelled()) {
+            Log.i("UploadAsyncTask", "providing fake reading!");
+            fpsel[0].onSensorChangedImplementation(1015.0f);
+            /*if (isCancelled()) break;
+            try {
+                Thread.sleep(1000);
+            } catch(InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }*/
+            break;
+        }
+        Log.i("FakePressureSensorEventListener", "told to stop listening");
+        return 0L;
+    }
+}
+
+public class FakePressureSensorEventListener extends BasePressureSensorEventListener {
+    private AsyncTask<FakePressureSensorEventListener, Integer, Long> mTask;
     FakePressureSensorEventListener(PressureSensorService pse) {
         super(pse);
-        class UploadAsyncTask extends AsyncTask<PressureSensorService, Integer, Long> {
-            protected Long doInBackground(PressureSensorService... pss) {
-                while (!isCancelled()) {
-                    if (isCancelled()) {
-                        Log.i("FakePressureSensorEventListener", "already told to stop listening!");
-                        break;
-                    }
-                    pss[0].OnPressureSensorChanged(1015.0f);
-                    try {
-                        Thread.sleep(1000);
-                    } catch(InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-                Log.i("FakePressureSensorEventListener", "told to stop listening");
-                return 0L;
-            }
-        }
 
-        mTask = new UploadAsyncTask().execute(pse);
+    }
+    @Override
+    public void startListening() {
+        Log.i("FakePressureSensorEventListener", "startListening");
+
+        mTask = new GenerateFakePressureAsyncTask().execute(this);
     }
 
     @Override
     public void stopListening() {
-        mTask.cancel(false);
+        Log.i("FakePressureSensorEventListener", "stopListening");
+
+        mTask.cancel(true);
+        mTask = null;
     }
 
 }

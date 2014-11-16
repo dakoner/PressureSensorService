@@ -105,7 +105,7 @@ public class UploadIntentService extends IntentService {
                 } catch (IOException e) {
                     throw e;
                 }
-
+                Log.i("UploadIntentService", "Upload succeeded.");
                 CharSequence text = "Upload succeeded.";
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(getApplicationContext(), text, duration);

@@ -6,33 +6,27 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-public class PressureSensorEventListener implements SensorEventListener {
-    private PressureSensorService mPSE;
+public class PressureSensorEventListener extends BasePressureSensorEventListener {
     private SensorManager mSensorManager;
+    private Sensor mPressure;
 
     PressureSensorEventListener(PressureSensorService pse) {
-        mPSE = pse;
+        super(pse);
+    }
+
+
+
+    public void startListening() {
         mSensorManager = (SensorManager) mPSE.getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
-        mSensorManager.registerListener(this,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE),
-                SensorManager.SENSOR_DELAY_NORMAL);
-    }
-
-
-    @Override
-    public  void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Do something here if sensor accuracy changes.
-    }
-
-    @Override
-    public  void onSensorChanged(SensorEvent event) {
-        mPSE.OnPressureSensorChanged(event.values[0]);
+        mPressure = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        mSensorManager.registerListener(this, mPressure, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void stopListening() {
         if (mSensorManager != null) {
             mSensorManager.unregisterListener(this);
             mSensorManager = null;
+            mPressure = null;
         }
     }
 

@@ -22,7 +22,8 @@ public class MainActivity extends Activity {
 
         Intent intent2 = new Intent(context, PressureSensorService.class);
         context.startService(intent2);
-        finish();
+
+//        finish();
     }
 
 }
