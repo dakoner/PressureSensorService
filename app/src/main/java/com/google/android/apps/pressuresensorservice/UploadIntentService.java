@@ -111,7 +111,7 @@ public class UploadIntentService extends IntentService {
                 Toast toast = Toast.makeText(getApplicationContext(), text, duration);
                 toast.show();
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);

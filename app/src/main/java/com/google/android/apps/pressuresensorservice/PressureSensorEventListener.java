@@ -2,14 +2,14 @@ package com.google.android.apps.pressuresensorservice;
 
 import android.content.Context;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
+
 import android.hardware.SensorManager;
 import android.util.Log;
 
 public class PressureSensorEventListener extends BasePressureSensorEventListener {
     private SensorManager mSensorManager;
     private Sensor mPressure;
+
     PressureSensorEventListener(PressureSensorService pse) {
         super(pse);
         mSensorManager = (SensorManager) mPSE.getApplicationContext().getSystemService(Context.SENSOR_SERVICE);

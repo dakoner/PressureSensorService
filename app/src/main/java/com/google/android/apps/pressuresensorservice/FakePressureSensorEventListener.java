@@ -27,10 +27,12 @@ class GenerateFakePressureAsyncTask extends AsyncTask<FakePressureSensorEventLis
 
 public class FakePressureSensorEventListener extends BasePressureSensorEventListener {
     private AsyncTask<FakePressureSensorEventListener, Integer, Long> mTask;
+
     FakePressureSensorEventListener(PressureSensorService pse) {
         super(pse);
 
     }
+
     @Override
     public void startListening() {
         Log.i("FakePressureSensorEventListener", "startListening");

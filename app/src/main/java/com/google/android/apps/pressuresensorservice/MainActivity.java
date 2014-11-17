@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String pressureString = intent.getStringExtra(PressureSensorService.EXTRA_KEY_IN);
-            TextView view = (TextView)findViewById(R.id.textView);
+            TextView view = (TextView) findViewById(R.id.textView);
             view.setText(pressureString);
 
             CharSequence text = "Got pressure reading: " + pressureString;
@@ -50,9 +50,9 @@ public class MainActivity extends Activity {
         context.startService(new Intent(context, PressureSensorService.class));
 
         // Watch for button clicks.
-        Button button = (Button)findViewById(R.id.start);
+        Button button = (Button) findViewById(R.id.start);
         button.setOnClickListener(mStartListener);
-        button = (Button)findViewById(R.id.stop);
+        button = (Button) findViewById(R.id.stop);
         button.setOnClickListener(mStopListener);
     }
 
