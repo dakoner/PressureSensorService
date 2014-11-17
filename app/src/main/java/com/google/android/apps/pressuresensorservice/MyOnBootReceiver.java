@@ -15,8 +15,7 @@ public class MyOnBootReceiver extends BroadcastReceiver {
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
 
-        Intent intent2 = new Intent(context, PressureSensorService.class);
-        context.startService(intent2);
+        context.startService(new Intent(context, PressureSensorService.class));
 
     }
 }
