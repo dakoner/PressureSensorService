@@ -1,39 +1,27 @@
 package com.google.android.apps.pressuresensorservice;
 
-import android.content.Context;
 import android.hardware.Sensor;
-
-import android.hardware.SensorManager;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.util.Log;
 
-public class PressureSensorEventListener extends BasePressureSensorEventListener {
-    private SensorManager mSensorManager;
-    private Sensor mPressure;
+import java.util.concurrent.CountDownLatch;
 
-    PressureSensorEventListener(PressureSensorService pse) {
-        super(pse);
-        mSensorManager = (SensorManager) mPSE.getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
-        mPressure = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+class PressureSensorEventListener implements SensorEventListener {
+    Float mPressure;
+    CountDownLatch mLatch;
+
+    PressureSensorEventListener(CountDownLatch latch, Float pressure) {
+        super();
+        mLatch = latch;
+        mPressure = pressure;
+    }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    @Override
-    public void startListening() {
-        if (isListening()) {
-            Log.e("PressureSensorEventListener", "Was already listening");
-        } else {
-            mSensorManager.registerListener(this, mPressure, SensorManager.SENSOR_DELAY_NORMAL);
-            mIsListening = true;
-        }
+    public void onSensorChanged(SensorEvent event) {
+        Log.i("PressureSensorEventListener", "Pressure=" + event.values[0]);
+        mPressure = event.values[0];
+        mLatch.countDown();
     }
-
-    @Override
-    public void stopListening() {
-        if (!isListening()) {
-            Log.e("PressureSensorEventListener", "Was already not listening");
-        } else {
-            mSensorManager.unregisterListener(this);
-            mIsListening = false;
-        }
-    }
-
 }
