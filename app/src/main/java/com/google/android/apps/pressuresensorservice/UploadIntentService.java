@@ -54,6 +54,7 @@ public class UploadIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         float pressure = Float.parseFloat(intent.getStringExtra(EXTRA_KEY_IN));
 
+
         HttpClient httpClient = createHttpClient();
 
         String url = "https://goosci-outreach.appspot.com/weather/314159";
