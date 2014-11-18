@@ -16,13 +16,8 @@ public class PressureBroadcastReceiver extends BroadcastReceiver {
     }
     @Override
     public void onReceive(Context context, Intent intent) {
-        String pressureString = intent.getStringExtra(PressureSensorIntentService.EXTRA_KEY_IN);
+        String pressureString = intent.getStringExtra(mActivity.getString(R.string.pressure_key));
         TextView view = (TextView) mActivity.findViewById(R.id.textView);
         view.setText(pressureString);
-
-        CharSequence text = "Got pressure reading: " + pressureString;
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
     }
 }

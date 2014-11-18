@@ -13,14 +13,12 @@ import android.os.Bundle;
 import java.util.Calendar;
 
 public class MainActivity extends Activity {
-
     private BroadcastReceiver mReceiver = new PressureBroadcastReceiver(this);
-
 
     @Override
     protected void onResume() {
         IntentFilter filter = new IntentFilter();
-        filter.addAction("com.google.android.apps.pressuresensorservice.OnPressure");
+        filter.addAction(getString(R.string.pressure_action));
         registerReceiver(mReceiver, filter);
         super.onResume();
     }
@@ -36,16 +34,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
+        // Run the pressure sensor collection immediately.
         Context context = getApplicationContext();
         context.startService(new Intent(context, PressureSensorIntentService.class));
 
-
+        // Also reschedule it (even if the app stops).
         Intent restartIntent = new Intent(this, PressureSensorIntentService.class);
         PendingIntent restartPendingIntent = PendingIntent.getService(this, 0, restartIntent, 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarm.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 600 * 1000, restartPendingIntent);
-
     }
-
-
 }

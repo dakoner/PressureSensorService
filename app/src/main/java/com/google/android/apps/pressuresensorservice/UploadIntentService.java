@@ -31,10 +31,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class UploadIntentService extends IntentService {
-    public static final String EXTRA_KEY_IN = "EXTRA_IN";
+    public static final String UPLOAD_INTENT = "com.google.android.apps.pressuresensorservice.UploadIntentService";
 
     public UploadIntentService() {
-        super("com.google.android.apps.pressuresensorservice.UploadIntentService");
+        super(UPLOAD_INTENT);
     }
 
     private HttpClient createHttpClient() {
@@ -52,12 +52,12 @@ public class UploadIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        float pressure = Float.parseFloat(intent.getStringExtra(EXTRA_KEY_IN));
+        float pressure = Float.parseFloat(intent.getStringExtra(getString(R.string.pressure_key)));
 
 
         HttpClient httpClient = createHttpClient();
 
-        String url = "https://goosci-outreach.appspot.com/weather/314159";
+        String url = R.string.weather_uri + "314159";
         HttpPost post = new HttpPost(url);
         StringEntity params;
         long response_code = -1;
@@ -80,7 +80,6 @@ public class UploadIntentService extends IntentService {
             } catch (IOException e) {
                 throw e;
             }
-            Log.i("UploadIntentService", builder.toString());
 
             post.addHeader("content-type", "application/json");
             post.setEntity(params);
@@ -92,6 +91,7 @@ public class UploadIntentService extends IntentService {
                 throw e;
             }
 
+            // TODO(dek): handle errors better here.
             StringBuffer result;
             {
                 response_code = response.getStatusLine().getStatusCode();
@@ -106,21 +106,12 @@ public class UploadIntentService extends IntentService {
                 } catch (IOException e) {
                     throw e;
                 }
-                Log.i("UploadIntentService", "Upload succeeded.");
-                CharSequence text = "Upload succeeded.";
-                int duration = Toast.LENGTH_LONG;
-                Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-                toast.show();
             }
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
-            CharSequence text = "Error: " + sw.toString(); // stack trace as a string
-
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-            toast.show();
+            Log.e("UploadIntentService: ", "Upload failed: " + sw.toString());
         } finally {
             httpClient.getConnectionManager().shutdown();
         }

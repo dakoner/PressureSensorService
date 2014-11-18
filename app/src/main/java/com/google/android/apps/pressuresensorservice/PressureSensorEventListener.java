@@ -19,11 +19,11 @@ class PressureSensorEventListener implements SensorEventListener {
     }
 
     public void onSensorChanged(SensorEvent event) {
-        Log.i("PressureSensorEventListener", "Pressure=" + event.values[0]);
         mPressure = event.values[0];
         mLatch.countDown();
     }
 
+    // TODO(dek): is there a better way for the owner of this class to get the latest pressure value?
     public float getPressure() {
         return mPressure;
     }

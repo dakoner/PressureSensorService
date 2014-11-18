@@ -11,8 +11,6 @@ import java.util.concurrent.CountDownLatch;
 
 
 public class PressureSensorIntentService extends IntentService {
-    public static final String EXTRA_KEY_IN = "EXTRA_IN";
-
     public PressureSensorIntentService() {
         super("com.google.android.apps.pressuresensorservice.PressureSensorIntentService");
     }
@@ -21,6 +19,7 @@ public class PressureSensorIntentService extends IntentService {
         SensorManager sm = (SensorManager) getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
         Sensor ps = sm.getDefaultSensor(Sensor.TYPE_PRESSURE);
 
+        // TODO(dek): better support for multiple readings in one intent cycle.
         CountDownLatch latch = new CountDownLatch(1);
         PressureSensorEventListener pl = new PressureSensorEventListener(latch);
 
@@ -35,15 +34,14 @@ public class PressureSensorIntentService extends IntentService {
         float pressure = pl.getPressure();
 
         Intent bi = new Intent();
-        bi.setAction("com.google.android.apps.pressuresensorservice.OnPressure");
-        bi.putExtra(EXTRA_KEY_IN, Float.toString(pressure));
+        bi.setAction(getString(R.string.pressure_action));
+        bi.putExtra(getString(R.string.pressure_key), Float.toString(pressure));
         sendBroadcast(bi);
 
         String pressureString = Float.toString(pressure);
         Intent uploadIntent = new Intent(this, UploadIntentService.class);
-        uploadIntent.putExtra(UploadIntentService.EXTRA_KEY_IN, pressureString);
+        uploadIntent.putExtra(getString(R.string.pressure_key, pressureString), pressureString);
         startService(uploadIntent);
 
-        Log.i("PressureSensorIntentService", "Pressure=" + pressure);
     }
 }
