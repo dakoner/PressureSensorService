@@ -9,10 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -43,12 +39,12 @@ public class MainActivity extends Activity {
         Context context = getApplicationContext();
         context.startService(new Intent(context, PressureSensorIntentService.class));
 
-        /*
+
         Intent restartIntent = new Intent(this, PressureSensorIntentService.class);
-        restartPendingIntent = PendingIntent.getService(this, 0, restartIntent, 0);
+        PendingIntent restartPendingIntent = PendingIntent.getService(this, 0, restartIntent, 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarm.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 600 * 1000, restartPendingIntent);
-        */
+
     }
 
 

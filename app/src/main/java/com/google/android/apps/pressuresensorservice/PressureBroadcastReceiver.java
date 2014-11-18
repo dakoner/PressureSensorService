@@ -11,6 +11,7 @@ public class PressureBroadcastReceiver extends BroadcastReceiver {
     Activity mActivity;
 
     PressureBroadcastReceiver(Activity activity) {
+        super();
         mActivity = activity;
     }
     @Override
@@ -24,4 +25,4 @@ public class PressureBroadcastReceiver extends BroadcastReceiver {
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
     }
-};
+}

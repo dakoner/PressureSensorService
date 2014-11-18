@@ -8,13 +8,12 @@ import android.util.Log;
 import java.util.concurrent.CountDownLatch;
 
 class PressureSensorEventListener implements SensorEventListener {
-    Float mPressure;
+    float mPressure = 0.f;
     CountDownLatch mLatch;
 
-    PressureSensorEventListener(CountDownLatch latch, Float pressure) {
+    PressureSensorEventListener(CountDownLatch latch) {
         super();
         mLatch = latch;
-        mPressure = pressure;
     }
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
@@ -23,5 +22,9 @@ class PressureSensorEventListener implements SensorEventListener {
         Log.i("PressureSensorEventListener", "Pressure=" + event.values[0]);
         mPressure = event.values[0];
         mLatch.countDown();
+    }
+
+    public float getPressure() {
+        return mPressure;
     }
 }

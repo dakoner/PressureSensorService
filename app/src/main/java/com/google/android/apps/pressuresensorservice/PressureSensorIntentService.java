@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
@@ -21,21 +20,30 @@ public class PressureSensorIntentService extends IntentService {
     public void onHandleIntent(Intent intent) {
         SensorManager sm = (SensorManager) getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
         Sensor ps = sm.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        Float pressure = 0f;
+
         CountDownLatch latch = new CountDownLatch(1);
-        SensorEventListener pl = (SensorEventListener) new PressureSensorEventListener(latch, pressure);
+        PressureSensorEventListener pl = new PressureSensorEventListener(latch);
+
         sm.registerListener(pl, ps, SensorManager.SENSOR_DELAY_NORMAL);
         try {
             latch.await();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        Log.i("PressureSensorIntentService", "Pressure=" + pressure);
         sm.unregisterListener(pl);
+
+        float pressure = pl.getPressure();
 
         Intent bi = new Intent();
         bi.setAction("com.google.android.apps.pressuresensorservice.OnPressure");
         bi.putExtra(EXTRA_KEY_IN, Float.toString(pressure));
         sendBroadcast(bi);
+
+        String pressureString = Float.toString(pressure);
+        Intent uploadIntent = new Intent(this, UploadIntentService.class);
+        uploadIntent.putExtra(UploadIntentService.EXTRA_KEY_IN, pressureString);
+        startService(uploadIntent);
+
+        Log.i("PressureSensorIntentService", "Pressure=" + pressure);
     }
 }
