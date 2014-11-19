@@ -1,6 +1,4 @@
 <resources>
     <string name="app_name">PressureSensorService</string>
-    <string name="weather_uri">https://goosci-outreach.appspot.com/weather/</string>
     <string name="pressure_action">com.google.android.apps.pressuresensorservice.OnPressure</string>
-    <string name="pressure_key">PRESSURE</string>
 </resources>

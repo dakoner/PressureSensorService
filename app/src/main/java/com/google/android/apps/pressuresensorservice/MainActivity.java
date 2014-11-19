@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         IntentFilter filter = new IntentFilter();
-        filter.addAction(getString(R.string.pressure_action));
+        filter.addAction(PressureSensorEventListener.pressureAction);
         registerReceiver(mReceiver, filter);
         super.onResume();
     }

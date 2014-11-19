@@ -52,32 +52,21 @@ public class UploadIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        float pressure = Float.parseFloat(intent.getStringExtra(getString(R.string.pressure_key)));
+        float pressure = Float.parseFloat(intent.getStringExtra(PressureSensorEventListener.pressureKey));
 
 
         HttpClient httpClient = createHttpClient();
 
-        String url = R.string.weather_uri + "314159";
+        String url = "https://goosci-outreach.appspot.com/weather/314159";
         HttpPost post = new HttpPost(url);
         StringEntity params;
-        long response_code = -1;
+        long responseCode = -1;
 
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
         try {
             try {
                 params = new StringEntity("{\"pressure\":" + pressure + ",\"collected_at\":\"" + sdf.format(new Date()) + "\",\"us_units\":0}");
             } catch (UnsupportedEncodingException e) {
-                throw e;
-            }
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(params.getContent()));
-            String aux;
-            StringBuilder builder = new StringBuilder();
-            try {
-                while ((aux = in.readLine()) != null) {
-                    builder.append(aux);
-                }
-            } catch (IOException e) {
                 throw e;
             }
 
@@ -90,28 +79,8 @@ public class UploadIntentService extends IntentService {
             } catch (Exception e) {
                 throw e;
             }
-
-            // TODO(dek): handle errors better here.
-            StringBuffer result;
-            {
-                response_code = response.getStatusLine().getStatusCode();
-                try {
-                    BufferedReader rd = new BufferedReader(
-                            new InputStreamReader(response.getEntity().getContent()));
-                    result = new StringBuffer();
-                    String line;
-                    while ((line = rd.readLine()) != null) {
-                        result.append(line);
-                    }
-                } catch (IOException e) {
-                    throw e;
-                }
-            }
         } catch (Exception e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            Log.e("UploadIntentService: ", "Upload failed: " + sw.toString());
+            Log.e("UploadIntentService: ", "Upload failed", e);
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
