@@ -16,7 +16,7 @@ public class PressureBroadcastReceiver extends BroadcastReceiver {
     }
     @Override
     public void onReceive(Context context, Intent intent) {
-        String pressureString = intent.getStringExtra(PressureSensorEventListener.pressureKey);
+        String pressureString = intent.getStringExtra(PressureSensorEventListener.PRESSURE_KEY);
         TextView view = (TextView) mActivity.findViewById(R.id.textView);
         view.setText(pressureString);
     }

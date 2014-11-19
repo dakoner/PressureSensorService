@@ -52,7 +52,7 @@ public class UploadIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        float pressure = Float.parseFloat(intent.getStringExtra(PressureSensorEventListener.pressureKey));
+        float pressure = Float.parseFloat(intent.getStringExtra(PressureSensorEventListener.PRESSURE_KEY));
 
 
         HttpClient httpClient = createHttpClient();
