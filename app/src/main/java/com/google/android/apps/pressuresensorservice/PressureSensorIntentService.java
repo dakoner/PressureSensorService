@@ -19,8 +19,9 @@ public class PressureSensorIntentService extends IntentService {
     public void onHandleIntent(Intent intent) {
         SensorManager sm = (SensorManager) getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
         Sensor ps = sm.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        // Even though the intent service is exiting, we've registering an event listener that will be called by the framework at
-        //  some unspecified time in the future.  We enable a partial wake lock to ensure the phone does not sleep before the reading is acquired.
+        // Even though the intent service is exiting, we're registering an event listener that will
+        // be called by the framework at  some unspecified time in the future.  We enable a partial
+        // wake lock to ensure the phone does not sleep before the reading is acquired.
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PressureSensorEventListener");
         wl.acquire();
