@@ -1,7 +1,11 @@
 package com.google.android.apps.pressuresensorservice;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -54,6 +58,17 @@ public class UploadIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         float pressure = Float.parseFloat(intent.getStringExtra(PressureSensorEventListener.PRESSURE_KEY));
 
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String provider = locationManager.getBestProvider(criteria, false);
+        Location location = locationManager.getLastKnownLocation(provider);
+
+        double latitude = 0.;
+        double longitude = 0.;
+        String locationString = "";
+        if (location != null) {
+            locationString = location.getLatitude() + " " + location.getLongitude();
+        }
 
         HttpClient httpClient = createHttpClient();
 
@@ -65,11 +80,15 @@ public class UploadIntentService extends IntentService {
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
         try {
             try {
-                params = new StringEntity("{\"pressure\":" + pressure + ",\"collected_at\":\"" + sdf.format(new Date()) + "\",\"us_units\":0}");
+                params = new StringEntity(
+                        "{\"pressure\":" + pressure +
+                        ",\"collected_at\":\"" + sdf.format(new Date()) + "\"" +
+                        ",\"us_units\":0" +
+                        ",\"raw\":\"" + locationString + "\"" +
+                        "}");
             } catch (UnsupportedEncodingException e) {
                 throw e;
             }
-
             post.addHeader("content-type", "application/json");
             post.setEntity(params);
             HttpResponse response;
