@@ -43,6 +43,6 @@ public class MainActivity extends Activity {
         Intent restartIntent = new Intent(this, PressureSensorIntentService.class);
         PendingIntent restartPendingIntent = PendingIntent.getService(this, 0, restartIntent, 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 600 * 1000, restartPendingIntent);
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 600 * 1000, 600 * 1000, restartPendingIntent);
     }
 }
