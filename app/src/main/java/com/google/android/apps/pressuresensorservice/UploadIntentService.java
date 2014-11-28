@@ -1,6 +1,8 @@
 package com.google.android.apps.pressuresensorservice;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -56,6 +58,7 @@ public class UploadIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
         float pressure = Float.parseFloat(intent.getStringExtra(PressureSensorEventListener.PRESSURE_KEY));
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -82,10 +85,10 @@ public class UploadIntentService extends IntentService {
             try {
                 params = new StringEntity(
                         "{\"pressure\":" + pressure +
-                        ",\"collected_at\":\"" + sdf.format(new Date()) + "\"" +
-                        ",\"us_units\":0" +
-                        ",\"raw\":\"" + locationString + "\"" +
-                        "}");
+                                ",\"collected_at\":\"" + sdf.format(new Date()) + "\"" +
+                                ",\"us_units\":0" +
+                                ",\"raw\":\"" + locationString + "\"" +
+                                "}");
             } catch (UnsupportedEncodingException e) {
                 throw e;
             }
@@ -98,8 +101,37 @@ public class UploadIntentService extends IntentService {
             } catch (Exception e) {
                 throw e;
             }
+
+            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date now = new Date();
+            String strDate = sdfDate.format(now);
+
+            Notification.Builder mBuilder =
+                    new Notification.Builder(this)
+                            .setSmallIcon(R.drawable.ic_test)
+                            .setContentTitle("Upload succeeded.")
+                            .setContentText("Finished at " + strDate);
+            int mNotificationId = 001;
+            NotificationManager mNotifyMgr =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+
         } catch (Exception e) {
-            Log.e("UploadIntentService: ", "Upload failed", e);
+            Log.i("UploadIntentService", "failed to notify on successful upload.");
+            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date now = new Date();
+            String strDate = sdfDate.format(now);
+
+            Notification.Builder mBuilder =
+                    new Notification.Builder(this)
+                            .setSmallIcon(R.drawable.ic_test)
+                            .setContentTitle("Upload failed.")
+                            .setContentText("Failed at " + strDate);
+            int mNotificationId = 002;
+            NotificationManager mNotifyMgr =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
